@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+    --blue-color:rgb(25,31,108);
+    --orange-color:rgb(233,94,0);
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+}
+
+#board{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+.cell{
+    height: 20vh;
+    width: 100%;
+    border: 3px solid var(--orange-color);
+    background-color: var(--blue-color);
+    color: var(--orange-color);
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem; 
+}
