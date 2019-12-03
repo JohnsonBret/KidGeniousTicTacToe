@@ -10,6 +10,7 @@
 <body>
     <main>
         <h1>Tic Tac Toe</h1>
+        <p id="time"></p>
         <h3 id="turnText">It's X's Turn</h3>
         <section id="board">
             <div id="r1_c1" class="cell"></div>
@@ -21,6 +22,12 @@
             <div id="r3_c1" class="cell"></div>
             <div id="r3_c2" class="cell"></div>
             <div id="r3_c3" class="cell"></div>
+        </section>
+        <section id="endGame">
+            <h1 id="winner"></h1>
+            <p>Has won the Game!</p>
+            <button id="playAgain">Play Again</button>
+            <button id="quit">Quit</button>
         </section>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
