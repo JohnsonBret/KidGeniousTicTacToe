@@ -23,15 +23,30 @@ main{
 
 .lightgreen{
     background-color: var(--light-green);
-    /* background: var(--light-green) radial-gradient(black 0%, black, 39%, var(--light-green) 40%); */
 }
 
 .mediumgreen{
     background-color: var(--medium-green);
 }
 
+.flag{
+    background-image: url(https://www.google.com/logos/fnbx/minesweeper/flag_icon.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.showMine{
+    background: var(--orange-color) radial-gradient(black 0%, black, 39%, var(--orange-color) 40%, var(--orange-color) 80%, var(--light-green));
+}
+
 .cell{
     width: 100%;
     height: 100%;
     margin: 0;
+}
+
+p{
+    font-size: 0.8rem;
+    font-weight: bold;
 }
