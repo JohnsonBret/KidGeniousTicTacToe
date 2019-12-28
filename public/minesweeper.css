@@ -29,6 +29,14 @@ main{
     background-color: var(--medium-green);
 }
 
+.lightskin{
+    background-color: var(--light-skin);
+}
+
+.darkskin{
+    background-color: var(--dark-skin);
+}
+
 .flag{
     background-image: url(https://www.google.com/logos/fnbx/minesweeper/flag_icon.png);
     background-size: contain;
@@ -41,6 +49,7 @@ main{
 }
 
 .cell{
+    min-height: 100%;
     width: 100%;
     height: 100%;
     margin: 0;

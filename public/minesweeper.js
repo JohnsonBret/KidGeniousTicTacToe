@@ -1,13 +1,41 @@
+
+//TODO - don't let the player put a flag on a revealed space
+//TODO - Figure out why the revealed colors might be changing
+
 let gameBoard = document.getElementById("board");
 
 let numberOfMines = 30;
+let numberOfFoundMines = 0;
+
+let minesDisplay = document.getElementById("numMinesDisplay");
+let minesDisplayString = `Mines ${numberOfMines}`;
+minesDisplay.innerHTML = minesDisplayString;
+
+const checkIfAllMinesFound = ()=>{
+    if(numberOfFoundMines == numberOfMines)
+    {
+        alert("You Found all the Mines!  You Win!");
+    }
+}
+
+const changeToRevealColorScheme = (clickedSquare)=>{
+    if(clickedSquare.classList.contains("lightgreen"))
+    {
+        clickedSquare.classList.remove("lightgreen");
+        clickedSquare.classList.add("lightskin");
+    }
+    else{
+        clickedSquare.classList.remove("mediumgreen");
+        clickedSquare.classList.add("darkskin");
+    }
+}
 
 const randomlyPlaceMines = ()=>{
     for(let i = 0; i < numberOfMines; i++)
     {
         let row = Math.floor(Math.random() * 14) + 1;
         let column = Math.floor(Math.random() * 18) + 1;
-        console.log(`Row: ${row} Column: ${column}`);
+        console.log(`Placing Mine on ->Row: ${row} Column: ${column} i is: ${i}`);
 
         let mineCell = document.getElementById(`c${column}r${row}`);
 
@@ -15,6 +43,10 @@ const randomlyPlaceMines = ()=>{
         if(!mineCell.classList.contains("hiddenMine"))
         {
             mineCell.classList.add("hiddenMine");
+        }
+        else{
+            i = i - 1;
+            console.log("Double Mine - Go Again", i);
         }
         
     }
@@ -56,6 +88,8 @@ const checkAdjacentSquaresForZeroes = async (zeroCell)=>{
                 if(checkedAdjacentCell.children[0].style.display == "none")
                 {
                     checkedAdjacentCell.children[0].style.display = "block";
+                    checkedAdjacentCell.children[0].style.visibility = "hidden";
+                    changeToRevealColorScheme(checkedAdjacentCell);
                     checkAdjacentSquaresForZeroes(checkedAdjacentCell);
                 }
             }
@@ -65,21 +99,37 @@ const checkAdjacentSquaresForZeroes = async (zeroCell)=>{
             }
             else{
                 checkedAdjacentCell.children[0].style.display = "block";
+                changeToRevealColorScheme(checkedAdjacentCell);
             }
         }
     }
 }
 
 const revealSquare = async(clickedSquare)=>{
-    clickedSquare.children[0].style.display = "block";
 
-    console.log(clickedSquare.children[0].innerHTML);
-
-    if(clickedSquare.children[0].innerHTML == "0")
+    if(clickedSquare.classList.contains("lightskin") || 
+    clickedSquare.classList.contains("darkskin"))
     {
-        console.log("Its Zero!")
-        await checkAdjacentSquaresForZeroes(clickedSquare);
+        console.log("Clicked a revealed square!");
+        return;
     }
+
+    if(clickedSquare.children[0])
+    {
+        clickedSquare.children[0].style.display = "block";
+        console.log(clickedSquare.children[0].innerHTML);
+
+        changeToRevealColorScheme(clickedSquare);
+
+
+        if(clickedSquare.children[0].innerHTML == "0")
+        {
+            console.log("Its Zero!")
+            clickedSquare.children[0].style.visibility = "hidden";
+            await checkAdjacentSquaresForZeroes(clickedSquare);
+        }
+    }
+
 }
 
 const colorCellNumberBasedOnDanger = (cellNum, paragraph)=>{
@@ -116,7 +166,7 @@ const countAdjacentMines = ()=>{
     {
         for(let c = 1; c <= 18; c++)
         {
-            console.log(`Checking Row: ${r} Column ${c}`)
+            // console.log(`Checking Row: ${r} Column ${c}`)
             let minesAdjacentToCurrentCell = 0;
 
             for(let x = -1; x <= 1; x++)
@@ -133,7 +183,7 @@ const countAdjacentMines = ()=>{
                     {
                         continue;
                     }
-                    console.log(`Checking cell at ${cellx} : ${celly}`);
+                    // console.log(`Checking cell at ${cellx} : ${celly}`);
                     let checkedAdjacentCell = document.getElementById(`c${cellx}r${celly}`);
                     if(checkedAdjacentCell.classList.contains("hiddenMine"))
                     {
@@ -202,14 +252,38 @@ for(let r = 1; r <= 14; r++)
                 if(event.target.classList.contains("flag"))
                 {
                     event.target.classList.remove("flag");
+                    if(event.target.classList.contains("hiddenMine"))
+                    {
+                        numberOfFoundMines--;
+                    }
                 }
                 else{
-                    event.target.classList.add("flag");
+                    if(event.target.children[0]== undefined)
+                    {
+                        return;
+                    }
+                   
+                    if(event.target.children[0].style.display == "none")
+                    {
+                        event.target.classList.add("flag");
+
+                        if(event.target.classList.contains("hiddenMine"))
+                        {
+                            numberOfFoundMines++;
+                            console.log("Marked Mine", numberOfFoundMines);
+                            checkIfAllMinesFound();
+                        }
+                    }
+                    
                 }
                 
             }//Digging for mines
             else{
-                if(event.target.classList.contains("hiddenMine"))
+                if(event.target.classList.contains("flag"))
+                {
+                    console.log("You clicked a flag - nothing happens...");
+                }
+                else if(event.target.classList.contains("hiddenMine"))
                 {
                     event.target.classList.add("showMine");
                     setTimeout(()=>{
@@ -221,12 +295,12 @@ for(let r = 1; r <= 14; r++)
                     revealSquare(event.target);
                 }
             }
-
-
         });
 
 
         gameBoard.appendChild(newDiv);
+        // let rect = newDiv.getBoundingClientRect();
+        // console.log(rect.top, rect.bottom, rect.left, rect.right);
     }
 }
 

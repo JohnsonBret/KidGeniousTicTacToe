@@ -6,6 +6,8 @@
     --light-green: #aad751;
     --medium-green: #a2d149;
     --dark-green: #4a752c;
+    --light-skin: rgb(229,194,159);
+    --dark-skin: rgb(215,184,153);
 }
 
 body{
