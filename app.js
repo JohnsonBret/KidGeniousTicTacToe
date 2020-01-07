@@ -20,6 +20,10 @@ app.get('/minesweeper', (req, res)=>{
     res.status(200).sendFile(path.join(__dirname, 'minesweeper.html'));
 });
 
+app.get('/boomerman', (req, res)=>{
+    res.status(200).sendFile(path.join(__dirname, 'boomerman.html'));
+});
+
 var server = app.listen(port, ()=>{
 
     console.log(`Server is up on port ${port}`);

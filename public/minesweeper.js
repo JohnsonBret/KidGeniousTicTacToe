@@ -87,6 +87,11 @@ const checkAdjacentSquaresForZeroes = async (zeroCell)=>{
                 console.log("Its Zero!")
                 if(checkedAdjacentCell.children[0].style.display == "none")
                 {
+                    if(checkedAdjacentCell.classList.contains("flag"))
+                    {
+                        checkedAdjacentCell.classList.remove("flag");
+                    }
+
                     checkedAdjacentCell.children[0].style.display = "block";
                     checkedAdjacentCell.children[0].style.visibility = "hidden";
                     changeToRevealColorScheme(checkedAdjacentCell);
@@ -98,6 +103,12 @@ const checkAdjacentSquaresForZeroes = async (zeroCell)=>{
 
             }
             else{
+
+                if(checkedAdjacentCell.classList.contains("flag"))
+                {
+                    checkedAdjacentCell.classList.remove("flag");
+                }
+
                 checkedAdjacentCell.children[0].style.display = "block";
                 changeToRevealColorScheme(checkedAdjacentCell);
             }
@@ -288,6 +299,7 @@ for(let r = 1; r <= 14; r++)
                     event.target.classList.add("showMine");
                     setTimeout(()=>{
                         alert("GAME OVER - You Blew up!");
+                        location.reload();
                     }, 1000);
                     
                 }

@@ -21,6 +21,35 @@ main{
     box-shadow: 0px 0px 3px black;
 }
 
+#board:hover{
+    cursor:url("Shovel.cur"), default;
+}
+
+#top{
+    margin: 10px;
+}
+
+#numMinesDisplay{
+    text-align: center;
+    margin: 5px;
+}
+
+#top a{
+    background-color: var(--dark-green); /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#top a:hover{
+    box-shadow: 3px 3px 0px var(--medium-green); /* Green */
+    color: var(--medium-green);
+}
+
 .lightgreen{
     background-color: var(--light-green);
 }

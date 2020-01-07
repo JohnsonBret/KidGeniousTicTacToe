@@ -1,0 +1,43 @@
+main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+#board{
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    grid-template-rows: repeat(24, 1fr);
+    width: 80%;
+    height: 80vh;
+    box-shadow: 0px 0px 3px black;
+}
+
+.cell{
+    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    z-index: 1;
+}
+
+.lightgreen{
+    background-color: var(--light-green);
+}
+
+.mediumgreen{
+    background-color: var(--medium-green);
+}
+
+.boomerman{
+    z-index: 2;
+    background-color: red;
+    justify-self: center;
+    align-self: center;
+    width: 100%;
+    height: 100%;
+    /* grid-column: 1/2;
+    grid-row: 1/2; */
+}
