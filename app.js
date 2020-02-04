@@ -17,6 +17,7 @@ app.get('/lobby', (req, res)=>{
 });
 
 app.get('/minesweeper', (req, res)=>{
+    console.log("Travis is ip: " + req.connection.remoteAddress);
     res.status(200).sendFile(path.join(__dirname, 'minesweeper.html'));
 });
 
