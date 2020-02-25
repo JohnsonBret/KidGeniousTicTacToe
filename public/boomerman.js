@@ -2,10 +2,16 @@ let gameBoard = document.getElementById("board");
 
 let boomerman;
 
+let isBoomermanAlive = true;
+
 let boomermanPosition = {
     x: 1,
     y: 1,
 }
+
+let levelClock;
+let levelClockParagraph = document.getElementById("levelClock");
+let levelTimeLimit = 120000;
 
 let explosionDurationTime = 1000;
 
@@ -13,28 +19,28 @@ let explosionDurationTime = 1000;
 let levelOne = {
     r1: [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
     r2: [0,1,0,1,1,1,1,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
-    r3: [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 1,1,0,1,1,1,0,0],
+    r3: [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 1,1,2,1,1,1,0,0],
     r4: [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,1,0,0],
-    r5: [0,2,0,1,2,2,1,0, 1,0,0,0,0,0,0,0, 0,1,1,0,0,1,0,1],
+    r5: [0,2,0,1,2,2,1,0, 1,0,0,0,0,0,0,0, 0,1,1,2,2,1,2,1],
     r6: [0,2,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
     r7: [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
-    r8: [0,1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
+    r8: [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
     r9: [0,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
     r10: [1,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r11: [0,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
-    r12: [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
-    r13: [1,1,1,1,1,0,0,0, 1,0,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r12: [0,0,0,0,0,0,0,0, 2,0,2,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r13: [1,1,1,1,1,2,2,2, 1,0,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
     r14: [0,0,0,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
-    r15: [1,0,1,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r15: [1,2,1,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
     r16: [1,0,1,0,1,0,0,0, 1,1,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
-    r17: [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0],
-    r18: [1,0,1,1,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
-    r19: [0,0,0,1,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
-    r20: [0,1,0,1,0,0,0,0, 0,0,1,1,1,1,1,0, 1,0,0,1,0,0,0,0],
-    r21: [0,1,0,1,0,0,0,0, 0,0,1,0,0,0,0,0, 1,0,1,1,1,0,0,0],
+    r17: [1,0,2,0,2,0,0,0, 0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r18: [1,0,1,1,1,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
+    r19: [0,0,0,1,0,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
+    r20: [0,1,0,1,0,0,0,0, 0,0,1,1,1,1,1,2, 1,0,0,1,0,0,0,0],
+    r21: [0,1,0,1,0,0,0,0, 0,0,1,0,0,0,0,0, 1,2,1,1,1,0,0,0],
     r22: [0,1,0,1,0,0,0,0, 0,0,1,1,1,0,0,0, 1,0,0,1,0,0,0,1],
-    r23: [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,0,0,1,0,1],
-    r24: [0,1,0,0,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,0,1]
+    r23: [0,0,0,2,0,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,2,0,1,0,1],
+    r24: [0,1,0,2,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,3,1]
 }
 
 const setupGameBoard = async ()=>{
@@ -109,6 +115,15 @@ const generateWalls = ()=>{
                     currentCell.classList.add("breakWall");
                 }
             }
+            else if(levelOne[`r${y}`][x] == 3)
+            {
+                if(currentCell.classList.contains("mediumgreen") || currentCell.classList.contains("lightgreen"))
+                {
+                    currentCell.classList.remove("mediumgreen", "lightgreen");
+                    currentCell.classList.add("door");
+                }
+            }
+            
         }
         
     }
@@ -117,12 +132,12 @@ const generateWalls = ()=>{
 const checkMoveStaysWithinBoardBoundary = (xPos, yPos)=>{
 
     console.log("Boundary Check", xPos, yPos);
-    if(xPos > 24 || xPos < 0)
+    if(xPos > 24 || xPos <= 0)
     {
         return false;
     }
 
-    if(yPos > 24 || yPos < 0)
+    if(yPos > 24 || yPos <= 0)
     {
         return false;
     }
@@ -130,6 +145,12 @@ const checkMoveStaysWithinBoardBoundary = (xPos, yPos)=>{
 }
 
 const checkDesiredMoveCellIsNotWall = (xPos, yPos) =>{
+
+    if(!checkMoveStaysWithinBoardBoundary(xPos, yPos))
+    {
+        return;
+    }
+
     let checkWallCell = document.getElementById(`x${xPos}y${yPos}`);
 
     if(checkWallCell.classList.contains("wall"))
@@ -149,6 +170,8 @@ const checkDesiredMoveCellIsNotWall = (xPos, yPos) =>{
 
 const moveBoomerman = async(xPos, yPos)=>{
 
+
+
     if(!checkMoveStaysWithinBoardBoundary(boomermanPosition.x + xPos, boomermanPosition.y + yPos))
     {
         console.log("Out of bounds", xPos, yPos);
@@ -165,6 +188,110 @@ const moveBoomerman = async(xPos, yPos)=>{
 
     boomerman.style.gridColumn = `${boomermanPosition.x}/${boomermanPosition.x + 1}`;
     boomerman.style.gridRow = `${boomermanPosition.y}/${boomermanPosition.y + 1}`;
+}
+
+const removeExplosionSprites = (cells)=>{
+    for(let i = 0; i < cells.length; i++){
+        if(cells[i].classList.contains("explosion-center"))
+        {
+            cells[i].classList.remove("explosion-center");
+        }
+
+        if(cells[i].classList.contains("explosion-top"))
+        {
+            cells[i].classList.remove("explosion-top");
+        }
+
+        if(cells[i].classList.contains("explosion-bottom"))
+        {
+            cells[i].classList.remove("explosion-bottom");
+        }
+
+        if(cells[i].classList.contains("explosion-left"))
+        {
+            cells[i].classList.remove("explosion-left");
+        }
+
+        if(cells[i].classList.contains("explosion-right"))
+        {
+            cells[i].classList.remove("explosion-right");
+        }
+    }
+}
+
+const addBombExplosionSpritesToBoard = (xPos, yPos, minX, maxX, minY, maxY)=>{
+    console.log(`Explosion Sprites xpos: ${xPos} ypos ${yPos} x-min:${minX} x-max:${maxX} y-min:${minY} ymax:${maxY}`)
+
+    let cellDivArry = [];
+
+    //Center Sprite
+
+    
+    let exploCenter = document.getElementById(`x${xPos}y${yPos}`);
+    exploCenter.classList.add("explosion-center");
+    cellDivArry.push(exploCenter);
+
+    if(xPos != maxX)
+    {
+        let exploRight = document.getElementById(`x${maxX - 1}y${yPos}`);
+        exploRight.classList.add("explosion-right");
+        cellDivArry.push(exploRight);
+    }
+
+    if(xPos != minX)
+    {
+        let exploLeft = document.getElementById(`x${minX}y${yPos}`);
+        exploLeft.classList.add("explosion-left");
+        cellDivArry.push(exploLeft);
+    }
+
+
+    let exploTop = document.getElementById(`x${xPos}y${minY}`);
+    exploTop.classList.add("explosion-top");
+    cellDivArry.push(exploTop);
+
+    let exploBottom = document.getElementById(`x${xPos}y${maxY - 1}`);
+    exploBottom.classList.add("explosion-bottom");
+    cellDivArry.push(exploBottom);
+
+    return cellDivArry;
+
+}
+
+const setBoomermanToDead = () =>{
+    boomerman.classList.remove("boomerman");
+    boomerman.classList.add("boomerman-dead");
+    isBoomermanAlive = false;
+
+    setTimeout(()=>{
+        location.reload();
+    },3000)
+}
+
+
+const checkIfBoomermanWithinExplosion = (xPos, yPos, minX, maxX, minY, maxY)=>{
+
+    for(let x = minX; x < maxX; x++)
+    {
+        
+        if(boomermanPosition.x == x && boomermanPosition.y == yPos)
+        {
+            console.log(`I blew up Boomerman at X${xPos} Y${y}`);
+            alert("! Be careful with E X P L O S I V E S - You blew yourself up !");
+            setBoomermanToDead();
+        }
+    }
+
+    for(let y = minY; y < maxY; y++)
+    {
+        
+        if(boomermanPosition.y == y && boomermanPosition.x == xPos)
+        {
+            console.log(`I blew up Boomerman at X${xPos} Y${y}`);
+            alert("! Be careful with E X P L O S I V E S - You blew yourself up !");
+            setBoomermanToDead();
+        }
+    }
 }
 
 const checkIfDestructableWithinExplosion = (xPos, yPos, minX, maxX, minY, maxY)=>{
@@ -239,11 +366,16 @@ const createBombExplosion = (xPos, yPos)=>{
     gameBoard.appendChild(newExplosionY);
 
     checkIfDestructableWithinExplosion(xPos, yPos, minX, maxX, minY, maxY);
+    
+    let spriteCells = addBombExplosionSpritesToBoard(xPos, yPos, minX, maxX, minY, maxY);
+
+    checkIfBoomermanWithinExplosion(xPos, yPos, minX, maxX, minY, maxY);
 
     setTimeout(()=>{
         gameBoard.removeChild(newExplosionX); 
-        gameBoard.removeChild(newExplosionY);}
-        , explosionDurationTime );
+        gameBoard.removeChild(newExplosionY);
+        removeExplosionSprites(spriteCells);
+    }, explosionDurationTime );
 }
 
 const dropBomb = ()=>{
@@ -269,6 +401,12 @@ const dropBomb = ()=>{
 }
 
 const getPlayerInput = async (event)=>{
+
+    if(!isBoomermanAlive)
+    {
+        return;
+    }
+
     switch(event.key){
         case "ArrowUp":
             moveBoomerman(0, -1);
@@ -297,13 +435,44 @@ const createBoomerman = async ()=>{
     gameBoard.appendChild(boomerman);
 }
 
+const checkIfTimeIsUp = ()=>{
+    return levelTimeLimit <= 0;
+}
 
+const startLevelClock = ()=>{
+    let startTime = Date.now();
 
+    levelClock = setInterval(() => {
+        console.log(`Current Time is ${levelTimeLimit - 1000}`);
+        levelTimeLimit -= 1000;
+
+        let minutes =  Math.floor(levelTimeLimit / 60000);
+        let seconds = Math.round((levelTimeLimit / 1000) % 60);
+
+        minutes = minutes < 0 ? 0 : minutes;
+        seconds = seconds < 0 ? 0 : seconds;
+
+        if(seconds < 10)
+        {
+            seconds = `0${seconds}`
+        }
+
+        let timeFormat = `Time left ${minutes}:${seconds}`;
+
+        levelClockParagraph.innerHTML = timeFormat;
+
+        if(checkIfTimeIsUp() && isBoomermanAlive){
+            alert("You R - A - N out of TiMe...");
+            setBoomermanToDead();
+        }
+    }, 1000);
+}
 
 const initializeGame = async ()=>{
     await setupGameBoard();
     await createBoomerman();
     moveBoomerman(0,0);
+    startLevelClock();
 }
 
 initializeGame();
