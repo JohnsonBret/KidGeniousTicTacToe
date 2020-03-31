@@ -9,6 +9,8 @@ let boomermanPosition = {
     y: 1,
 }
 
+let enemies = [];
+
 let levelClock;
 let levelClockParagraph = document.getElementById("levelClock");
 let levelTimeLimit = 120000;
@@ -93,7 +95,7 @@ const generateWalls = ()=>{
 
         for(let x = 0; x < levelOne[`r${y}`].length; x++)
         {
-            console.log(` Current Cell is: ${levelOne[`r${y}`][x]}`);
+            // console.log(` Current Cell is: ${levelOne[`r${y}`][x]}`);
 
             let currentCell = document.getElementById(`x${x+1}y${y}`)
 
@@ -122,16 +124,14 @@ const generateWalls = ()=>{
                     currentCell.classList.remove("mediumgreen", "lightgreen");
                     currentCell.classList.add("door");
                 }
-            }
-            
+            }  
         }
-        
     }
 }
 
 const checkMoveStaysWithinBoardBoundary = (xPos, yPos)=>{
 
-    console.log("Boundary Check", xPos, yPos);
+    // console.log("Boundary Check", xPos, yPos);
     if(xPos > 24 || xPos <= 0)
     {
         return false;
@@ -170,8 +170,6 @@ const checkDesiredMoveCellIsNotWall = (xPos, yPos) =>{
 
 const moveBoomerman = async(xPos, yPos)=>{
 
-
-
     if(!checkMoveStaysWithinBoardBoundary(boomermanPosition.x + xPos, boomermanPosition.y + yPos))
     {
         console.log("Out of bounds", xPos, yPos);
@@ -188,6 +186,14 @@ const moveBoomerman = async(xPos, yPos)=>{
 
     boomerman.style.gridColumn = `${boomermanPosition.x}/${boomermanPosition.x + 1}`;
     boomerman.style.gridRow = `${boomermanPosition.y}/${boomermanPosition.y + 1}`;
+
+    for(let e = 0; e < enemies.length; e++)
+    {
+        if(checkEnemyCollision(enemies[e].x, enemies[e].y))
+        {
+            setBoomermanToDead();
+        }
+    }
 }
 
 const removeExplosionSprites = (cells)=>{
@@ -426,6 +432,99 @@ const getPlayerInput = async (event)=>{
     }
 }
 
+const checkEnemyCollision = (enemyX, enemyY)=>{
+    return enemyX == boomermanPosition.x && enemyY == boomermanPosition.y;
+}
+
+const chooseBalloonMoveDirection = ()=>{
+    let xVec = Math.floor(Math.random() * 3 - 1);
+    let yVec;
+    if(Math.abs(xVec) == 1)
+    {
+        yVec = 0;
+    }
+    else{
+        let rando = Math.random();
+        yVec = rando > 0.5 ? 1 : -1;
+    }
+
+    console.log(`Balloon New Direction X${xVec} Y${yVec}`)
+
+    return {
+        xVec,
+        yVec
+    }
+}
+
+const moveBalloonEnemy = (balloonEnemy)=>{
+    console.log(`Balloon is at X: ${balloonEnemy.x} Y: ${balloonEnemy.y}
+Boomerman is at X: ${boomermanPosition.x} Y: ${boomermanPosition.y}
+Vector to Boomerman is X: ${boomermanPosition.x - balloonEnemy.x} Y: ${boomermanPosition.y - balloonEnemy.y}
+    `)
+
+    if(checkDesiredMoveCellIsNotWall(balloonEnemy.x + balloonEnemy.xVec, balloonEnemy.y + balloonEnemy.yVec))
+    {
+        //Pick new move direction
+        let balloonVec = chooseBalloonMoveDirection()
+        balloonEnemy.xVec = balloonVec.xVec,
+        balloonEnemy.yVec = balloonVec.yVec,
+        moveBalloonEnemy(balloonEnemy);
+        return;
+    }
+    
+    if(!checkMoveStaysWithinBoardBoundary(balloonEnemy.x + balloonEnemy.xVec, balloonEnemy.y + balloonEnemy.yVec))
+    {
+        //Pick new move direction
+        let balloonVec = chooseBalloonMoveDirection()
+        balloonEnemy.xVec = balloonVec.xVec,
+        balloonEnemy.yVec = balloonVec.yVec,
+        moveBalloonEnemy(balloonEnemy);
+        return;
+    }
+
+     //Move that direction
+     balloonEnemy.x = balloonEnemy.x + balloonEnemy.xVec;
+     balloonEnemy.y = balloonEnemy.y + balloonEnemy.yVec;
+ 
+     balloonEnemy.elem.style.gridColumn = `${balloonEnemy.x}/${balloonEnemy.x + 1}`;
+     balloonEnemy.elem.style.gridRow = `${balloonEnemy.y}/${balloonEnemy.y + 1}`;
+    
+    if(checkEnemyCollision(balloonEnemy.x, balloonEnemy.y)){
+        setBoomermanToDead();
+    }
+}
+
+const createEnemyBalloon = (xPos, yPos)=>{
+
+    let balloonDiv = document.createElement("div");
+    balloonDiv.classList.add("enemy");
+    balloonDiv.classList.add("balloon");
+    
+    
+    balloonDiv.style.gridColumn = `${xPos}/${xPos + 1}`;
+    balloonDiv.style.gridRow = `${yPos}/${yPos + 1}`;
+
+    let balloonVec = chooseBalloonMoveDirection();
+
+    console.log(`Baloon Move Vector X${balloonVec.xVec}, Y${balloonVec.yVec}`);
+
+    let balloon = {
+        elem: balloonDiv,
+        x: xPos,
+        y: yPos,
+        xVec: balloonVec.xVec,
+        yVec: balloonVec.yVec,
+    }
+
+    setInterval(()=>{
+        moveBalloonEnemy(balloon);
+    }, 1500);
+
+    enemies.push(balloon);
+
+    gameBoard.appendChild(balloonDiv);
+}
+
 const createBoomerman = async ()=>{
     boomerman = document.createElement("div");
     boomerman.setAttribute("id", "boomerman");
@@ -443,7 +542,6 @@ const startLevelClock = ()=>{
     let startTime = Date.now();
 
     levelClock = setInterval(() => {
-        console.log(`Current Time is ${levelTimeLimit - 1000}`);
         levelTimeLimit -= 1000;
 
         let minutes =  Math.floor(levelTimeLimit / 60000);
@@ -472,6 +570,10 @@ const initializeGame = async ()=>{
     await setupGameBoard();
     await createBoomerman();
     moveBoomerman(0,0);
+
+    createEnemyBalloon(3,2);
+    createEnemyBalloon(23,23);
+    createEnemyBalloon(1,19);
     startLevelClock();
 }
 
