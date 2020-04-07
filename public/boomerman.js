@@ -274,6 +274,11 @@ const setBoomermanToDead = () =>{
     },3000)
 }
 
+const setBalloonToDead = (balloon) =>{
+    balloon.elem.classList.remove("balloon");
+    balloon.elem.classList.add("balloon-dead");
+}
+
 
 const checkIfBoomermanWithinExplosion = (xPos, yPos, minX, maxX, minY, maxY)=>{
 
@@ -296,6 +301,29 @@ const checkIfBoomermanWithinExplosion = (xPos, yPos, minX, maxX, minY, maxY)=>{
             console.log(`I blew up Boomerman at X${xPos} Y${y}`);
             alert("! Be careful with E X P L O S I V E S - You blew yourself up !");
             setBoomermanToDead();
+        }
+    }
+}
+
+const checkIfBalloonWithinExplosion = (xPos, yPos, minX, maxX, minY, maxY, balloon)=>{
+
+    for(let x = minX; x < maxX; x++)
+    {
+        
+        if(balloon.x == x && balloon.y == yPos)
+        {
+            console.log(`I blew up a Balloon at X${x} Y${yPos}`);
+            setBalloonToDead(balloon);
+        }
+    }
+
+    for(let y = minY; y < maxY; y++)
+    {
+        
+        if(balloon.y == y && balloon.x == xPos)
+        {
+            console.log(`I blew up Balloon at X${xPos} Y${y}`);
+            setBalloonToDead(balloon);
         }
     }
 }
@@ -377,6 +405,12 @@ const createBombExplosion = (xPos, yPos)=>{
 
     checkIfBoomermanWithinExplosion(xPos, yPos, minX, maxX, minY, maxY);
 
+    //Check if any of our enemies are withing the explosion
+    console.log(`Enemies LEngth ${enemies.length}`)
+    for(let e = 0; e < enemies.length; e++){
+    checkIfBalloonWithinExplosion(xPos, yPos, minX, maxX, minY, maxY, enemies[e]);
+    }
+
     setTimeout(()=>{
         gameBoard.removeChild(newExplosionX); 
         gameBoard.removeChild(newExplosionY);
@@ -448,7 +482,7 @@ const chooseBalloonMoveDirection = ()=>{
         yVec = rando > 0.5 ? 1 : -1;
     }
 
-    console.log(`Balloon New Direction X${xVec} Y${yVec}`)
+    // console.log(`Balloon New Direction X${xVec} Y${yVec}`)
 
     return {
         xVec,
@@ -457,10 +491,10 @@ const chooseBalloonMoveDirection = ()=>{
 }
 
 const moveBalloonEnemy = (balloonEnemy)=>{
-    console.log(`Balloon is at X: ${balloonEnemy.x} Y: ${balloonEnemy.y}
-Boomerman is at X: ${boomermanPosition.x} Y: ${boomermanPosition.y}
-Vector to Boomerman is X: ${boomermanPosition.x - balloonEnemy.x} Y: ${boomermanPosition.y - balloonEnemy.y}
-    `)
+//     console.log(`Balloon is at X: ${balloonEnemy.x} Y: ${balloonEnemy.y}
+// Boomerman is at X: ${boomermanPosition.x} Y: ${boomermanPosition.y}
+// Vector to Boomerman is X: ${boomermanPosition.x - balloonEnemy.x} Y: ${boomermanPosition.y - balloonEnemy.y}
+//     `)
 
     if(checkDesiredMoveCellIsNotWall(balloonEnemy.x + balloonEnemy.xVec, balloonEnemy.y + balloonEnemy.yVec))
     {

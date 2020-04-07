@@ -117,6 +117,10 @@ main{
     background-image: url(enemy_1.png);
 }
 
+.balloon-dead{
+    background-image: url(enemy_dead_1.png);
+}
+
 .boomerman-dead{
     z-index: 2;
     background-image: url(boomerman_dead_1.png);
