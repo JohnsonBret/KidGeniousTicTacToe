@@ -11,6 +11,11 @@ let boomermanPosition = {
 
 let enemies = [];
 
+let exitPosition = {
+    x: -1,
+    y: -1,
+}
+
 let levelClock;
 let levelClockParagraph = document.getElementById("levelClock");
 let levelTimeLimit = 120000;
@@ -19,15 +24,42 @@ let explosionDurationTime = 1000;
 
 
 let levelOne = {
-    r1: [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
-    r2: [0,1,0,1,1,1,1,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
-    r3: [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 1,1,2,1,1,1,0,0],
-    r4: [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,1,0,0],
-    r5: [0,2,0,1,2,2,1,0, 1,0,0,0,0,0,0,0, 0,1,1,2,2,1,2,1],
-    r6: [0,2,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
-    r7: [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
-    r8: [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
-    r9: [0,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r1:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
+    r2:  [0,1,0,1,1,1,1,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
+    r3:  [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 1,1,2,1,1,1,0,0],
+    r4:  [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,1,0,0],
+    r5:  [0,2,0,1,2,2,1,0, 1,0,0,0,0,0,0,0, 0,1,1,2,2,1,2,1],
+    r6:  [0,2,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
+    r7:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
+    r8:  [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
+    r9:  [0,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r10: [1,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r11: [0,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r12: [0,0,0,0,0,0,0,0, 2,0,2,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r13: [1,1,1,1,1,2,2,2, 1,0,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r14: [0,0,0,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r15: [1,2,1,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r16: [1,0,1,0,1,0,0,0, 1,1,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r17: [1,0,2,0,2,0,0,0, 0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r18: [1,0,1,1,1,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
+    r19: [0,0,0,1,0,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
+    r20: [0,1,0,1,0,0,0,0, 0,0,1,1,1,1,1,2, 1,0,0,1,0,0,0,0],
+    r21: [0,1,0,1,0,0,0,0, 0,0,1,0,0,0,0,0, 1,2,1,1,1,0,0,0],
+    r22: [0,1,0,1,0,0,0,0, 0,0,1,1,1,0,0,0, 1,0,0,1,0,0,0,1],
+    r23: [0,0,0,2,0,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,2,0,1,0,1],
+    r24: [0,1,0,2,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,3,1]
+}
+
+let levelTwo = {
+    r1:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
+    r2:  [0,1,0,1,1,1,1,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
+    r3:  [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 1,1,2,1,1,1,0,0],
+    r4:  [0,1,0,1,0,0,1,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,1,0,0],
+    r5:  [0,2,0,1,2,2,1,0, 1,0,0,0,0,0,0,0, 0,1,1,2,2,1,2,1],
+    r6:  [0,2,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
+    r7:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
+    r8:  [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
+    r9:  [0,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
     r10: [1,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r11: [0,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r12: [0,0,0,0,0,0,0,0, 2,0,2,0,0,0,0,0, 0,0,0,0,0,0,0,0],
@@ -123,6 +155,8 @@ const generateWalls = ()=>{
                 {
                     currentCell.classList.remove("mediumgreen", "lightgreen");
                     currentCell.classList.add("door");
+                    exitPosition.x = x + 1;
+                    exitPosition.y = y;
                 }
             }  
         }
@@ -168,6 +202,10 @@ const checkDesiredMoveCellIsNotWall = (xPos, yPos) =>{
     }
 }
 
+const checkBoomermanIsOnExit = (boomermanX, boomermanY)=>{
+    return boomermanX == exitPosition.x && boomermanY == exitPosition.y;
+}
+
 const moveBoomerman = async(xPos, yPos)=>{
 
     if(!checkMoveStaysWithinBoardBoundary(boomermanPosition.x + xPos, boomermanPosition.y + yPos))
@@ -187,11 +225,21 @@ const moveBoomerman = async(xPos, yPos)=>{
     boomerman.style.gridColumn = `${boomermanPosition.x}/${boomermanPosition.x + 1}`;
     boomerman.style.gridRow = `${boomermanPosition.y}/${boomermanPosition.y + 1}`;
 
+    if(checkBoomermanIsOnExit(boomermanPosition.x, boomermanPosition.y))
+    {
+        alert("You Won the Level -> You are on the Exit!");
+        location.reload();
+    }
+
+
     for(let e = 0; e < enemies.length; e++)
     {
         if(checkEnemyCollision(enemies[e].x, enemies[e].y))
         {
-            setBoomermanToDead();
+            if(enemies[e].isDead == false)
+            {
+                setBoomermanToDead(); 
+            }
         }
     }
 }
@@ -277,6 +325,11 @@ const setBoomermanToDead = () =>{
 const setBalloonToDead = (balloon) =>{
     balloon.elem.classList.remove("balloon");
     balloon.elem.classList.add("balloon-dead");
+    balloon.isDead = true;
+
+    setTimeout(()=>{
+        gameBoard.removeChild(balloon.elem);
+    },3000)
 }
 
 
@@ -496,6 +549,11 @@ const moveBalloonEnemy = (balloonEnemy)=>{
 // Vector to Boomerman is X: ${boomermanPosition.x - balloonEnemy.x} Y: ${boomermanPosition.y - balloonEnemy.y}
 //     `)
 
+    if(balloonEnemy.isDead)
+    {
+        return;
+    }
+
     if(checkDesiredMoveCellIsNotWall(balloonEnemy.x + balloonEnemy.xVec, balloonEnemy.y + balloonEnemy.yVec))
     {
         //Pick new move direction
@@ -548,6 +606,7 @@ const createEnemyBalloon = (xPos, yPos)=>{
         y: yPos,
         xVec: balloonVec.xVec,
         yVec: balloonVec.yVec,
+        isDead: false,
     }
 
     setInterval(()=>{
@@ -605,6 +664,10 @@ const initializeGame = async ()=>{
     await createBoomerman();
     moveBoomerman(0,0);
 
+    //Create enemies in their own function - 
+    //Chain this function on to the end of Generate Walls - CreateEnemies?
+    //each enemy only needs a start position
+    //Array of objects?
     createEnemyBalloon(3,2);
     createEnemyBalloon(23,23);
     createEnemyBalloon(1,19);
