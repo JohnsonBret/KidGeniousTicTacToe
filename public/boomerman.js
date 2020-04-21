@@ -3,6 +3,7 @@ let gameBoard = document.getElementById("board");
 let boomerman;
 
 let isBoomermanAlive = true;
+let isLevelLoading = false;
 
 let boomermanPosition = {
     x: 1,
@@ -22,6 +23,22 @@ let levelTimeLimit = 120000;
 
 let explosionDurationTime = 1000;
 
+let levelOneEnemies = [
+    {x: 3,y: 2},
+    {x: 23,y: 23},
+    {x: 1,y: 19},
+]
+
+let levelTwoEnemies = [
+    {x: 5, y: 5},
+    {x: 20, y: 20},
+    {x: 10, y: 19},
+]
+
+let allLevelEnemies = [
+    levelOneEnemies,
+    levelTwoEnemies,
+]
 
 let levelOne = {
     r1:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
@@ -59,8 +76,8 @@ let levelTwo = {
     r6:  [0,2,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
     r7:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
     r8:  [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
-    r9:  [0,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
-    r10: [1,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r9:  [0,1,0,1,1,1,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r10: [2,0,0,1,0,1,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r11: [0,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r12: [0,0,0,0,0,0,0,0, 2,0,2,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r13: [1,1,1,1,1,2,2,2, 1,0,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
@@ -77,7 +94,15 @@ let levelTwo = {
     r24: [0,1,0,2,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,3,1]
 }
 
-const setupGameBoard = async ()=>{
+let allLevelGeometry = [
+    levelOne,
+    levelTwo,
+];
+
+let currentLevel = 0;
+
+
+const setupGameBoard = async (level)=>{
     for(let y = 1; y <= 24; y++)
     {
         for(let x = 1; x <= 24; x++)
@@ -115,23 +140,23 @@ const setupGameBoard = async ()=>{
         }
     }
 
-    generateWalls();
+    generateWalls(level);
 }
 
-const generateWalls = ()=>{
+const generateWalls = (level)=>{
 
     console.log("Generate Walls");
 
-    for(let y = 1; y <= Object.keys(levelOne).length; y++)
+    for(let y = 1; y <= Object.keys(level).length; y++)
     {
 
-        for(let x = 0; x < levelOne[`r${y}`].length; x++)
+        for(let x = 0; x < level[`r${y}`].length; x++)
         {
             // console.log(` Current Cell is: ${levelOne[`r${y}`][x]}`);
 
             let currentCell = document.getElementById(`x${x+1}y${y}`)
 
-            if(levelOne[`r${y}`][x] == 1)
+            if(level[`r${y}`][x] == 1)
             {
                 if(currentCell.classList.contains("mediumgreen") || currentCell.classList.contains("lightgreen"))
                 {
@@ -141,7 +166,7 @@ const generateWalls = ()=>{
                     currentCell.classList.add("wall");
                 }
             }
-            else if(levelOne[`r${y}`][x] == 2)
+            else if(level[`r${y}`][x] == 2)
             {
                 if(currentCell.classList.contains("mediumgreen") || currentCell.classList.contains("lightgreen"))
                 {
@@ -149,7 +174,7 @@ const generateWalls = ()=>{
                     currentCell.classList.add("breakWall");
                 }
             }
-            else if(levelOne[`r${y}`][x] == 3)
+            else if(level[`r${y}`][x] == 3)
             {
                 if(currentCell.classList.contains("mediumgreen") || currentCell.classList.contains("lightgreen"))
                 {
@@ -206,6 +231,14 @@ const checkBoomermanIsOnExit = (boomermanX, boomermanY)=>{
     return boomermanX == exitPosition.x && boomermanY == exitPosition.y;
 }
 
+const setBoomermanPosition = (xPos, yPos)=>{
+    boomermanPosition.x = xPos;
+    boomermanPosition.y = yPos;
+
+    boomerman.style.gridColumn = `${boomermanPosition.x}/${boomermanPosition.x + 1}`;
+    boomerman.style.gridRow = `${boomermanPosition.y}/${boomermanPosition.y + 1}`;
+}
+
 const moveBoomerman = async(xPos, yPos)=>{
 
     if(!checkMoveStaysWithinBoardBoundary(boomermanPosition.x + xPos, boomermanPosition.y + yPos))
@@ -227,8 +260,16 @@ const moveBoomerman = async(xPos, yPos)=>{
 
     if(checkBoomermanIsOnExit(boomermanPosition.x, boomermanPosition.y))
     {
-        alert("You Won the Level -> You are on the Exit!");
-        location.reload();
+        // alert("You Won the Level -> You are on the Exit!");
+        // location.reload();
+        if(isLevelLoading == false)
+        {
+            isLevelLoading = true;
+            currentLevel++;
+            unLoadCurrentLevel();
+            loadNextLevel(allLevelGeometry[currentLevel]);
+        }
+
     }
 
 
@@ -544,10 +585,6 @@ const chooseBalloonMoveDirection = ()=>{
 }
 
 const moveBalloonEnemy = (balloonEnemy)=>{
-//     console.log(`Balloon is at X: ${balloonEnemy.x} Y: ${balloonEnemy.y}
-// Boomerman is at X: ${boomermanPosition.x} Y: ${boomermanPosition.y}
-// Vector to Boomerman is X: ${boomermanPosition.x - balloonEnemy.x} Y: ${boomermanPosition.y - balloonEnemy.y}
-//     `)
 
     if(balloonEnemy.isDead)
     {
@@ -631,6 +668,10 @@ const checkIfTimeIsUp = ()=>{
     return levelTimeLimit <= 0;
 }
 
+const resetLevelClock = ()=>{
+    levelTimeLimit = 120000;
+}
+
 const startLevelClock = ()=>{
     let startTime = Date.now();
 
@@ -659,18 +700,37 @@ const startLevelClock = ()=>{
     }, 1000);
 }
 
+const createLevelEnemies = (enemiesObject)=>{
+    console.log("Create Level Enemies");
+
+    for(let i = 0; i < enemiesObject.length; i++){
+        createEnemyBalloon(enemiesObject[i].x, enemiesObject[i].y);
+    }
+}
+
+const unLoadCurrentLevel = ()=>{
+    while (gameBoard.firstChild) {
+        gameBoard.firstChild.remove();
+    }
+}
+
+const loadNextLevel = async(level)=>{
+    await setupGameBoard(level);
+    await createBoomerman();
+    setBoomermanPosition(1,1);
+
+
+    createLevelEnemies(allLevelEnemies[currentLevel]);
+    resetLevelClock();
+}
+
 const initializeGame = async ()=>{
-    await setupGameBoard();
+    await setupGameBoard(allLevelGeometry[currentLevel]);
     await createBoomerman();
     moveBoomerman(0,0);
 
-    //Create enemies in their own function - 
-    //Chain this function on to the end of Generate Walls - CreateEnemies?
-    //each enemy only needs a start position
-    //Array of objects?
-    createEnemyBalloon(3,2);
-    createEnemyBalloon(23,23);
-    createEnemyBalloon(1,19);
+    console.log("Load Level Enemies");
+    createLevelEnemies(allLevelEnemies[currentLevel]);
     startLevelClock();
 }
 
