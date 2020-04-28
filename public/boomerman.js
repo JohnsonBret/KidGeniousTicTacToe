@@ -25,7 +25,7 @@ let explosionDurationTime = 1000;
 
 let levelOneEnemies = [
     {x: 3,y: 2},
-    {x: 23,y: 23},
+    {x: 5,y: 2},
     {x: 1,y: 19},
 ]
 
@@ -35,9 +35,16 @@ let levelTwoEnemies = [
     {x: 10, y: 19},
 ]
 
+let levelThreeEnemies = [
+    {x: 12, y: 3},
+    {x: 12, y: 5},
+    {x: 12, y: 7},
+]
+
 let allLevelEnemies = [
     levelOneEnemies,
     levelTwoEnemies,
+    levelThreeEnemies,
 ]
 
 let levelOne = {
@@ -94,9 +101,37 @@ let levelTwo = {
     r24: [0,1,0,2,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,3,1]
 }
 
+let levelThree = {
+    r1:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
+    r2:  [0,1,0,1,1,1,1,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
+    r3:  [0,1,0,1,0,0,1,0, 1,0,0,2,2,2,0,1, 1,1,2,1,1,1,0,0],
+    r4:  [0,1,0,1,0,0,1,0, 1,0,0,0,0,2,0,1, 0,0,0,0,0,1,0,0],
+    r5:  [0,2,0,1,2,2,1,0, 1,0,0,0,2,2,0,1, 0,1,1,2,2,1,2,1],
+    r6:  [0,2,0,0,0,0,0,0, 1,0,0,0,0,2,0,1, 0,0,1,0,0,0,0,1],
+    r7:  [0,1,0,0,0,0,0,0, 1,0,0,2,2,2,0,1, 0,0,1,0,0,0,0,1],
+    r8:  [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,1, 0,0,1,1,2,1,1,1],
+    r9:  [0,1,0,1,1,1,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r10: [2,0,0,1,0,1,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r11: [0,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r12: [0,0,0,0,0,0,0,0, 2,0,2,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    r13: [1,1,1,1,1,2,2,2, 1,0,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r14: [0,0,0,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r15: [1,2,1,0,1,0,0,0, 1,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r16: [1,0,1,0,1,0,0,0, 1,1,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r17: [1,0,2,0,2,0,0,0, 0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+    r18: [1,0,1,1,1,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
+    r19: [0,0,0,1,0,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
+    r20: [0,1,0,1,0,0,0,0, 0,0,1,1,1,1,1,2, 1,0,0,1,0,0,0,0],
+    r21: [0,1,0,1,0,0,0,0, 0,0,1,0,0,0,0,0, 1,2,1,1,1,0,0,0],
+    r22: [0,1,0,1,0,0,0,0, 0,0,1,1,1,0,0,0, 1,0,0,1,0,0,0,1],
+    r23: [0,0,0,2,0,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,2,0,1,0,1],
+    r24: [0,1,0,2,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,3,1]
+}
+
 let allLevelGeometry = [
     levelOne,
     levelTwo,
+    levelThree,
 ];
 
 let currentLevel = 0;
@@ -182,6 +217,7 @@ const generateWalls = (level)=>{
                     currentCell.classList.add("door");
                     exitPosition.x = x + 1;
                     exitPosition.y = y;
+                    console.log(`Exit Position set to ${exitPosition.x} ${exitPosition.y}`);
                 }
             }  
         }
@@ -214,7 +250,7 @@ const checkDesiredMoveCellIsNotWall = (xPos, yPos) =>{
 
     if(checkWallCell.classList.contains("wall"))
     {
-        console.log(`Wall in way at cell x${xPos}y${yPos}`);
+        // console.log(`Wall in way at cell x${xPos}y${yPos}`);
         return true;
     }
     else if(checkWallCell.classList.contains("breakWall"))
@@ -266,7 +302,7 @@ const moveBoomerman = async(xPos, yPos)=>{
         {
             isLevelLoading = true;
             currentLevel++;
-            unLoadCurrentLevel();
+            await unLoadCurrentLevel();
             loadNextLevel(allLevelGeometry[currentLevel]);
         }
 
@@ -564,6 +600,18 @@ const checkEnemyCollision = (enemyX, enemyY)=>{
     return enemyX == boomermanPosition.x && enemyY == boomermanPosition.y;
 }
 
+const checkDesiredMoveCellHasNoEnemies = (desiredX, desiredY)=>{
+
+    for(let i = 0; i < enemies.length; i++)
+    {
+        if(enemies[i].x == desiredX && enemies[i].y == desiredY)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 const chooseBalloonMoveDirection = ()=>{
     let xVec = Math.floor(Math.random() * 3 - 1);
     let yVec;
@@ -611,6 +659,16 @@ const moveBalloonEnemy = (balloonEnemy)=>{
         return;
     }
 
+    if(!checkDesiredMoveCellHasNoEnemies(balloonEnemy.x + balloonEnemy.xVec, balloonEnemy.y + balloonEnemy.yVec))
+    {
+        //Pick new move direction
+        let balloonVec = chooseBalloonMoveDirection()
+        balloonEnemy.xVec = balloonVec.xVec,
+        balloonEnemy.yVec = balloonVec.yVec,
+        moveBalloonEnemy(balloonEnemy);
+        return;
+    }
+
      //Move that direction
      balloonEnemy.x = balloonEnemy.x + balloonEnemy.xVec;
      balloonEnemy.y = balloonEnemy.y + balloonEnemy.yVec;
@@ -646,9 +704,16 @@ const createEnemyBalloon = (xPos, yPos)=>{
         isDead: false,
     }
 
+    //Make interval smaller every level
+    //currentLevel is where we are storing the level index
+    //0 1 2 3
+    //To make 1500 SMALLER??!!!!
+    //Fraction
+    let moveTime = 1500 / (currentLevel + 1);
+
     setInterval(()=>{
         moveBalloonEnemy(balloon);
-    }, 1500);
+    }, moveTime);
 
     enemies.push(balloon);
 
@@ -708,10 +773,20 @@ const createLevelEnemies = (enemiesObject)=>{
     }
 }
 
-const unLoadCurrentLevel = ()=>{
+const unLoadCurrentLevel = async()=>{
     while (gameBoard.firstChild) {
         gameBoard.firstChild.remove();
     }
+}
+
+const removeEnemiesFromLevel = async()=>{
+    for(let i = 0; i < enemies.length; i++)
+    {
+        console.log(enemies[i].elem);
+        gameBoard.removeChild(enemies[i].elem);
+    }
+
+    enemies = [];
 }
 
 const loadNextLevel = async(level)=>{
@@ -719,9 +794,9 @@ const loadNextLevel = async(level)=>{
     await createBoomerman();
     setBoomermanPosition(1,1);
 
-
     createLevelEnemies(allLevelEnemies[currentLevel]);
     resetLevelClock();
+    isLevelLoading = false;
 }
 
 const initializeGame = async ()=>{
