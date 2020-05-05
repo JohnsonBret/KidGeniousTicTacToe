@@ -47,6 +47,27 @@ let allLevelEnemies = [
     levelThreeEnemies,
 ]
 
+let levelOnePortals = [
+    {portalX: 1, portalY: 9, exitX: 12, exitY: 21},
+    {portalX: 12, portalY: 21, exitX: 1, exitY: 9},
+]
+
+let levelTwoPortals = [
+    {portalX: 1, portalY: 9, exitX: 12, exitY: 21},
+    {portalX: 12, portalY: 21, exitX: 1, exitY: 9},
+]
+
+let levelThreePortals = [
+    {portalX: 1, portalY: 9, exitX: 12, exitY: 21},
+    {portalX: 12, portalY: 21, exitX: 1, exitY: 9},
+]
+
+let allLevelPortals = [
+    levelOnePortals,
+    levelTwoPortals,
+    levelThreePortals,
+]
+
 let levelOne = {
     r1:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
     r2:  [0,1,0,1,1,1,1,0, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0],
@@ -56,7 +77,7 @@ let levelOne = {
     r6:  [0,2,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
     r7:  [0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,1],
     r8:  [0,1,0,0,0,0,0,0, 2,0,0,0,0,0,0,0, 0,0,1,1,2,1,1,1],
-    r9:  [0,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
+    r9:  [4,1,0,0,0,0,0,0, 1,1,1,1,1,1,1,0, 0,0,0,0,0,0,0,0],
     r10: [1,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r11: [0,0,0,0,0,0,0,0, 1,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     r12: [0,0,0,0,0,0,0,0, 2,0,2,0,0,0,0,0, 0,0,0,0,0,0,0,0],
@@ -68,7 +89,7 @@ let levelOne = {
     r18: [1,0,1,1,1,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
     r19: [0,0,0,1,0,0,0,0, 0,0,0,0,0,0,2,0, 0,0,0,0,0,0,0,0],
     r20: [0,1,0,1,0,0,0,0, 0,0,1,1,1,1,1,2, 1,0,0,1,0,0,0,0],
-    r21: [0,1,0,1,0,0,0,0, 0,0,1,0,0,0,0,0, 1,2,1,1,1,0,0,0],
+    r21: [0,1,0,1,0,0,0,0, 0,0,1,4,0,0,0,0, 1,2,1,1,1,0,0,0],
     r22: [0,1,0,1,0,0,0,0, 0,0,1,1,1,0,0,0, 1,0,0,1,0,0,0,1],
     r23: [0,0,0,2,0,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,2,0,1,0,1],
     r24: [0,1,0,2,1,1,1,1, 0,0,0,0,0,0,0,0, 1,0,0,1,1,1,3,1]
@@ -219,6 +240,14 @@ const generateWalls = (level)=>{
                     exitPosition.y = y;
                     console.log(`Exit Position set to ${exitPosition.x} ${exitPosition.y}`);
                 }
+            }
+            else if(level[`r${y}`][x] == 4)
+            {
+                if(currentCell.classList.contains("mediumgreen") || currentCell.classList.contains("lightgreen"))
+                {
+                    currentCell.classList.remove("mediumgreen", "lightgreen");
+                    currentCell.classList.add("portal");
+                }
             }  
         }
     }
@@ -263,6 +292,20 @@ const checkDesiredMoveCellIsNotWall = (xPos, yPos) =>{
     }
 }
 
+const checkBoomermanIsOnPortal = (boomermanX, boomermanY)=>{
+
+    let currentLevelPortals = allLevelPortals[currentLevel];
+
+    for(let i = 0; i < currentLevelPortals.length; i++)
+    {
+        if(boomermanX == currentLevelPortals[i].portalX && boomermanY == currentLevelPortals[i].portalY)
+        {
+            setBoomermanPosition(currentLevelPortals[i].exitX, currentLevelPortals[i].exitY);
+        }
+    }
+}
+
+
 const checkBoomermanIsOnExit = (boomermanX, boomermanY)=>{
     return boomermanX == exitPosition.x && boomermanY == exitPosition.y;
 }
@@ -293,6 +336,10 @@ const moveBoomerman = async(xPos, yPos)=>{
 
     boomerman.style.gridColumn = `${boomermanPosition.x}/${boomermanPosition.x + 1}`;
     boomerman.style.gridRow = `${boomermanPosition.y}/${boomermanPosition.y + 1}`;
+
+
+    checkBoomermanIsOnPortal(boomermanPosition.x, boomermanPosition.y);
+
 
     if(checkBoomermanIsOnExit(boomermanPosition.x, boomermanPosition.y))
     {

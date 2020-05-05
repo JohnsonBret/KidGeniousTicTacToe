@@ -144,6 +144,17 @@ main{
     height: 100%;
 }
 
+.portal{
+    background-image: url(portal.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    justify-self: center;
+    align-self: center;
+    width: 100%;
+    height: 100%;
+}
+
 .wall{
     background-image: url(wall.png);
     background-size: cover;
