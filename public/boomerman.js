@@ -315,6 +315,7 @@ const moveBoomerman = async(xPos, yPos)=>{
         {
             if(enemies[e].isDead == false)
             {
+                alert("Balloon enemy killed you~!");
                 setBoomermanToDead(); 
             }
         }
@@ -677,6 +678,7 @@ const moveBalloonEnemy = (balloonEnemy)=>{
      balloonEnemy.elem.style.gridRow = `${balloonEnemy.y}/${balloonEnemy.y + 1}`;
     
     if(checkEnemyCollision(balloonEnemy.x, balloonEnemy.y)){
+        alert("You ran into a Balloon when Balloon Moved");
         setBoomermanToDead();
     }
 }
@@ -702,6 +704,7 @@ const createEnemyBalloon = (xPos, yPos)=>{
         xVec: balloonVec.xVec,
         yVec: balloonVec.yVec,
         isDead: false,
+        interval: null,
     }
 
     //Make interval smaller every level
@@ -711,7 +714,7 @@ const createEnemyBalloon = (xPos, yPos)=>{
     //Fraction
     let moveTime = 1500 / (currentLevel + 1);
 
-    setInterval(()=>{
+    balloon.interval = setInterval(()=>{
         moveBalloonEnemy(balloon);
     }, moveTime);
 
@@ -782,8 +785,7 @@ const unLoadCurrentLevel = async()=>{
 const removeEnemiesFromLevel = async()=>{
     for(let i = 0; i < enemies.length; i++)
     {
-        console.log(enemies[i].elem);
-        gameBoard.removeChild(enemies[i].elem);
+        clearInterval(enemies[i].interval);
     }
 
     enemies = [];
@@ -794,6 +796,7 @@ const loadNextLevel = async(level)=>{
     await createBoomerman();
     setBoomermanPosition(1,1);
 
+    removeEnemiesFromLevel();
     createLevelEnemies(allLevelEnemies[currentLevel]);
     resetLevelClock();
     isLevelLoading = false;
